@@ -390,11 +390,21 @@
 
 <!-- Load jQuery library -->  
 <script async="" src="//www.google-analytics.com/analytics.js"></script>
-<script type="text/javascript" src="./jquery.js"></script>
-<script type="text/javascript" src="./bootstrap.js"></script>
-<script type="text/javascript" src="./countdown.js"></script>
-<script type="text/javascript" src="./jquery_002.js"></script>
-<script type="text/javascript" src="./tabs.js"></script>
+
+<script type="text/javascript" src="https://students.woodridge.us/jquery.js"></script>
+<script type="text/javascript" src="https://students.woodridge.us/bootstrap.js"></script>
+<script type="text/javascript" src="https://students.woodridge.us/countdown.js"></script>
+<script type="text/javascript" src="https://students.woodridge.us/jquery_002.js"></script>
+<script type="text/javascript" src="https://students.woodridge.us/tabs.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        if(window.location.hash != "") {
+            $('a[href="' + window.location.hash + '"]').click()
+            $("html, body").animate({ scrollTop: 0 }, "slow")
+        }
+    });
+</script>
 
 <!-- Woodridge Google Analytics Code / updated 4.8.15 by @Unangst !!!-->  
 <script>
