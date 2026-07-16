@@ -55,3 +55,12 @@ jobs:
           git add badge.svg
           git diff --cached --quiet || git commit -m "Update status badge"
           git push
+          
+- name: Fetch status and build badge
+        run: |
+          RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.BETTERSTACK_TOKEN }}" \
+            "https://uptime.betterstack.com/api/v2/status-pages/${{ vars.SP_ID }}/resources/${{ vars.RESOURCE_ID }}")
+          echo "API response: $RESPONSE"
+          STATUS=$(echo "$RESPONSE" | jq -r '.data.attributes.status')
+          echo "Parsed status: $STATUS"
+          ...
