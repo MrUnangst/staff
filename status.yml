@@ -1,0 +1,41 @@
+# .github/workflows/update-status.yml
+name: Update status badge
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch status and build badge
+        run: |
+          STATUS=$(curl -s -H "Authorization: Bearer ${{ secrets.BETTERSTACK_TOKEN }}" \
+            "https://uptime.betterstack.com/api/v2/status-pages/${{ vars.SP_ID }}/resources/${{ vars.RESOURCE_ID }}" \
+            | jq -r '.data.attributes.status')
+
+          case "$STATUS" in
+            operational) COLOR="#2ecc71"; LABEL="Operational" ;;
+            degraded)    COLOR="#f39c12"; LABEL="Degraded" ;;
+            downtime)    COLOR="#e74c3c"; LABEL="Down" ;;
+            maintenance) COLOR="#3498db"; LABEL="Maintenance" ;;
+            *)           COLOR="#888888"; LABEL="Unknown" ;;
+          esac
+
+          cat > badge.svg <<EOF
+          <svg xmlns="http://www.w3.org/2000/svg" width="150" height="30">
+            <rect width="150" height="30" rx="6" fill="#1a1a1a"/>
+            <circle cx="16" cy="15" r="5" fill="${COLOR}"/>
+            <text x="30" y="19" font-family="sans-serif" font-size="12" fill="#ffffff">${LABEL}</text>
+          </svg>
+          EOF
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add badge.svg
+          git diff --cached --quiet || git commit -m "Update status badge"
+          git push
